@@ -9,8 +9,10 @@ final class ShellSession {
     weak var delegate: ShellSessionDelegate?
 
     private let pty = PTYManager()
-    private let ioQueue = DispatchQueue(label: "termx.shell.io", qos: .userInitiated)
-    private var isRunning = false
+    private let readQueue = DispatchQueue(label: "termx.shell.read", qos: .userInitiated)
+    private let writeQueue = DispatchQueue(label: "termx.shell.write", qos: .userInteractive)
+    private let stateLock = NSLock()
+    private var running = false
 
     var shellName: String {
         URL(fileURLWithPath: shellPath).lastPathComponent
@@ -22,18 +24,22 @@ final class ShellSession {
     }
 
     func start(columns: Int = 100, rows: Int = 30) {
-        guard !isRunning else { return }
-        isRunning = true
+        stateLock.lock()
+        guard !running else {
+            stateLock.unlock()
+            return
+        }
+        running = true
+        stateLock.unlock()
 
-        ioQueue.async { [weak self] in
-            guard let self else { return }
-            do {
-                try self.pty.start(shellPath: self.shellPath, columns: columns, rows: rows)
-                self.readLoop()
-            } catch {
-                self.isRunning = false
-                DispatchQueue.main.async { self.delegate?.shellSession(self, didFail: error) }
+        do {
+            try pty.start(shellPath: shellPath, columns: columns, rows: rows)
+            readQueue.async { [weak self] in
+                self?.readLoop()
             }
+        } catch {
+            setRunning(false)
+            DispatchQueue.main.async { self.delegate?.shellSession(self, didFail: error) }
         }
     }
 
@@ -43,8 +49,8 @@ final class ShellSession {
     }
 
     func send(_ data: Data) {
-        ioQueue.async { [weak self] in
-            guard let self else { return }
+        writeQueue.async { [weak self] in
+            guard let self, self.isRunning else { return }
             do {
                 try self.pty.write(data)
             } catch {
@@ -54,8 +60,8 @@ final class ShellSession {
     }
 
     func resize(columns: Int, rows: Int) {
-        ioQueue.async { [weak self] in
-            guard let self else { return }
+        writeQueue.async { [weak self] in
+            guard let self, self.isRunning else { return }
             do {
                 try self.pty.resize(columns: columns, rows: rows)
             } catch {
@@ -65,16 +71,28 @@ final class ShellSession {
     }
 
     func close() {
-        isRunning = false
-        ioQueue.async { [pty] in
+        setRunning(false)
+        writeQueue.async { [pty] in
             pty.close()
         }
+    }
+
+    private var isRunning: Bool {
+        stateLock.lock()
+        defer { stateLock.unlock() }
+        return running
+    }
+
+    private func setRunning(_ value: Bool) {
+        stateLock.lock()
+        running = value
+        stateLock.unlock()
     }
 
     private func readLoop() {
         while isRunning {
             guard let data = pty.readAvailable(), !data.isEmpty else {
-                isRunning = false
+                setRunning(false)
                 break
             }
             let text = String(decoding: data, as: UTF8.self)

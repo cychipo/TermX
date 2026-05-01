@@ -5,8 +5,8 @@ final class MainWindowController: NSWindowController {
 
     convenience init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 960, height: 600),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            contentRect: NSRect(x: 0, y: 0, width: 1040, height: 680),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
@@ -40,9 +40,11 @@ final class MainWindowController: NSWindowController {
         window.title = "TermX"
         window.center()
         window.tabbingMode = .preferred
-        window.contentViewController = tabController
+        window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
-        window.isMovableByWindowBackground = false
+        window.backgroundColor = TerminalTheme.windowBackground
+        window.isMovableByWindowBackground = true
+        window.contentView = TerminalContainerView(tabController: tabController)
         tabController.openNewTab()
     }
 }

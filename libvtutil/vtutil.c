@@ -28,6 +28,9 @@ int termx_open_pty(int *master_fd, pid_t *child_pid, const char *shell_path, con
         if (term_name != NULL) {
             setenv("TERM", term_name, 1);
         }
+        setenv("LANG", "en_US.UTF-8", 1);
+        setenv("LC_CTYPE", "UTF-8", 1);
+        unsetenv("LC_ALL");
         execl(shell_path, shell_path, "-l", NULL);
         _exit(127);
     }

@@ -1,42 +1,49 @@
 import AppKit
 
 struct InputHandler {
-    static func sequence(for event: NSEvent) -> String? {
-        if let special = specialSequence(for: event) {
-            return special
-        }
-        return event.characters
-    }
-
-    private static func specialSequence(for event: NSEvent) -> String? {
-        guard let scalar = event.charactersIgnoringModifiers?.unicodeScalars.first else { return nil }
-        switch scalar.value {
-        case UInt32(NSUpArrowFunctionKey):
-            return "\u{001B}[A"
-        case UInt32(NSDownArrowFunctionKey):
-            return "\u{001B}[B"
-        case UInt32(NSRightArrowFunctionKey):
-            return "\u{001B}[C"
-        case UInt32(NSLeftArrowFunctionKey):
-            return "\u{001B}[D"
-        case UInt32(NSDeleteFunctionKey):
+    static func sequence(for command: Selector) -> String? {
+        switch command {
+        case #selector(NSResponder.insertNewline(_:)),
+             #selector(NSResponder.insertLineBreak(_:)),
+             #selector(NSResponder.insertParagraphSeparator(_:)):
+            return "\r"
+        case #selector(NSResponder.insertTab(_:)),
+             #selector(NSResponder.insertBacktab(_:)):
+            return "\t"
+        case #selector(NSResponder.deleteBackward(_:)),
+             #selector(NSResponder.deleteWordBackward(_:)),
+             #selector(NSResponder.deleteToBeginningOfLine(_:)):
+            return "\u{7F}"
+        case #selector(NSResponder.deleteForward(_:)),
+             #selector(NSResponder.deleteWordForward(_:)),
+             #selector(NSResponder.deleteToEndOfLine(_:)):
             return "\u{001B}[3~"
-        case UInt32(NSHomeFunctionKey):
+        case #selector(NSResponder.moveUp(_:)),
+             #selector(NSResponder.moveBackwardAndModifySelection(_:)):
+            return "\u{001B}[A"
+        case #selector(NSResponder.moveDown(_:)),
+             #selector(NSResponder.moveForwardAndModifySelection(_:)):
+            return "\u{001B}[B"
+        case #selector(NSResponder.moveRight(_:)),
+             #selector(NSResponder.moveWordRight(_:)),
+             #selector(NSResponder.moveForward(_:)):
+            return "\u{001B}[C"
+        case #selector(NSResponder.moveLeft(_:)),
+             #selector(NSResponder.moveWordLeft(_:)),
+             #selector(NSResponder.moveBackward(_:)):
+            return "\u{001B}[D"
+        case #selector(NSResponder.moveToBeginningOfLine(_:)),
+             #selector(NSResponder.moveToLeftEndOfLine(_:)):
             return "\u{001B}[H"
-        case UInt32(NSEndFunctionKey):
+        case #selector(NSResponder.moveToEndOfLine(_:)),
+             #selector(NSResponder.moveToRightEndOfLine(_:)):
             return "\u{001B}[F"
-        case UInt32(NSPageUpFunctionKey):
+        case #selector(NSResponder.scrollPageUp(_:)):
             return "\u{001B}[5~"
-        case UInt32(NSPageDownFunctionKey):
+        case #selector(NSResponder.scrollPageDown(_:)):
             return "\u{001B}[6~"
-        case UInt32(NSF1FunctionKey):
-            return "\u{001B}OP"
-        case UInt32(NSF2FunctionKey):
-            return "\u{001B}OQ"
-        case UInt32(NSF3FunctionKey):
-            return "\u{001B}OR"
-        case UInt32(NSF4FunctionKey):
-            return "\u{001B}OS"
+        case #selector(NSResponder.cancelOperation(_:)):
+            return "\u{3}"
         default:
             return nil
         }

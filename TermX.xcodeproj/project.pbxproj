@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3F363FC305707D752DC440A2 /* TerminalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99DE15B27791E1626740F808 /* TerminalView.swift */; };
+		3F881009A81F299A234942DB /* TerminalInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0547B0FCC4FFA047231AF1B1 /* TerminalInputView.swift */; };
 		5468709730C9C1DCE217755B /* TerminalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B73E0014E2944184EDEB187C /* TerminalCell.swift */; };
 		54862C18D9D7817D8EC7DE80 /* TerminalBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678D989A2077A71346EEA200 /* TerminalBuffer.swift */; };
 		7482EF6616D2E2F7076A2B23 /* ANSIStyleMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956D2403AE6B7AC978486C76 /* ANSIStyleMapper.swift */; };
@@ -16,16 +17,20 @@
 		8B83BE94AA5731F945166BDB /* TerminalTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DC462C4677F478C4086609 /* TerminalTab.swift */; };
 		9CD23330F63A5F555F5F2F1D /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBE7F1318D3FBD6D6686E6A4 /* main.swift */; };
 		A04FEA3777D6C3060CAB60FF /* vtutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 078B2F60C29B9F1642576CED /* vtutil.c */; };
+		A3D0CF12D70EF45DFE049AD5 /* TerminalContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17C123C9BD98DBFCF7E9329 /* TerminalContainerView.swift */; };
 		A64BC471613F0B677CDD7851 /* PTYManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD447A91A19A7EE799A8A3C /* PTYManager.swift */; };
+		B15216413E07EA2816F71C47 /* TerminalTabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF926F40BB0C2CC752CC775F /* TerminalTabBarView.swift */; };
 		B3229CC7F8C2AE8F5D57F4E0 /* MainTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC5DA131FB74AA97C1AA705 /* MainTabViewController.swift */; };
 		CB6974A30E68BF5C8E10866B /* InputHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0241C40C9F9DB85F077A3822 /* InputHandler.swift */; };
 		D1A98E32C64C7C17733DD8F6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F5647FADDD1ACC938ACEA6DE /* Assets.xcassets */; };
 		D8C0AAFB9A564FF487017222 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AC928EE19DEBC48EE223B6 /* AppDelegate.swift */; };
+		E56ABF733177493ACAC306F0 /* TerminalTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF3C0C1D9582E06C512A7494 /* TerminalTheme.swift */; };
 		EE14F2F87CEF293F2A39C2D8 /* TerminalScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED8D5E2E2924DCF56A55A34 /* TerminalScrollView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0241C40C9F9DB85F077A3822 /* InputHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputHandler.swift; sourceTree = "<group>"; };
+		0547B0FCC4FFA047231AF1B1 /* TerminalInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalInputView.swift; sourceTree = "<group>"; };
 		078B2F60C29B9F1642576CED /* vtutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vtutil.c; sourceTree = "<group>"; };
 		0B6CD714AF93F919FCBA5F82 /* MainWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		3D148B0C51EF897BFAE1849C /* TermX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TermX.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,12 +44,15 @@
 		9599039A5545CAA4510BD0D4 /* TermX-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TermX-Bridging-Header.h"; sourceTree = "<group>"; };
 		99DE15B27791E1626740F808 /* TerminalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalView.swift; sourceTree = "<group>"; };
 		9ED8D5E2E2924DCF56A55A34 /* TerminalScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalScrollView.swift; sourceTree = "<group>"; };
+		A17C123C9BD98DBFCF7E9329 /* TerminalContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalContainerView.swift; sourceTree = "<group>"; };
 		B73E0014E2944184EDEB187C /* TerminalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalCell.swift; sourceTree = "<group>"; };
 		DBE7F1318D3FBD6D6686E6A4 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		DC582B4A7C21CBFB61D66F21 /* vtutil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vtutil.h; sourceTree = "<group>"; };
+		DF926F40BB0C2CC752CC775F /* TerminalTabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTabBarView.swift; sourceTree = "<group>"; };
 		ECD447A91A19A7EE799A8A3C /* PTYManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PTYManager.swift; sourceTree = "<group>"; };
 		F5647FADDD1ACC938ACEA6DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F6FAECAA5B77C6CC969E8A45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		FF3C0C1D9582E06C512A7494 /* TerminalTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTheme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -77,6 +85,7 @@
 			children = (
 				956D2403AE6B7AC978486C76 /* ANSIStyleMapper.swift */,
 				0241C40C9F9DB85F077A3822 /* InputHandler.swift */,
+				0547B0FCC4FFA047231AF1B1 /* TerminalInputView.swift */,
 				99DE15B27791E1626740F808 /* TerminalView.swift */,
 			);
 			path = Terminal;
@@ -105,7 +114,10 @@
 		D30B067D3C39B378E86558AC /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				A17C123C9BD98DBFCF7E9329 /* TerminalContainerView.swift */,
 				9ED8D5E2E2924DCF56A55A34 /* TerminalScrollView.swift */,
+				DF926F40BB0C2CC752CC775F /* TerminalTabBarView.swift */,
+				FF3C0C1D9582E06C512A7494 /* TerminalTheme.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -222,8 +234,12 @@
 				78C53C2F9DBE505997BC4691 /* ShellSession.swift in Sources */,
 				54862C18D9D7817D8EC7DE80 /* TerminalBuffer.swift in Sources */,
 				5468709730C9C1DCE217755B /* TerminalCell.swift in Sources */,
+				A3D0CF12D70EF45DFE049AD5 /* TerminalContainerView.swift in Sources */,
+				3F881009A81F299A234942DB /* TerminalInputView.swift in Sources */,
 				EE14F2F87CEF293F2A39C2D8 /* TerminalScrollView.swift in Sources */,
 				8B83BE94AA5731F945166BDB /* TerminalTab.swift in Sources */,
+				B15216413E07EA2816F71C47 /* TerminalTabBarView.swift in Sources */,
+				E56ABF733177493ACAC306F0 /* TerminalTheme.swift in Sources */,
 				3F363FC305707D752DC440A2 /* TerminalView.swift in Sources */,
 				9CD23330F63A5F555F5F2F1D /* main.swift in Sources */,
 				A04FEA3777D6C3060CAB60FF /* vtutil.c in Sources */,

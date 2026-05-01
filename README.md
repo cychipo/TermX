@@ -51,34 +51,64 @@ Cài XcodeGen nếu chưa có:
 brew install xcodegen
 ```
 
-## Generate Xcode Project
+## Lệnh Dev Nhanh
+
+Generate Xcode project:
+
+```bash
+make generate
+```
+
+Build app:
+
+```bash
+make build
+```
+
+Build rồi mở app:
+
+```bash
+make dev
+```
+
+Build rồi chạy binary trực tiếp để xem log trong terminal:
+
+```bash
+make run
+```
+
+Mở app đã build sẵn, không build lại:
+
+```bash
+make open
+```
+
+Restart app đã build sẵn, không build lại:
+
+```bash
+make rerun
+```
+
+Dọn build output:
+
+```bash
+make clean
+```
+
+## Lệnh Thủ công
+
+Nếu không muốn dùng `make`, có thể chạy trực tiếp:
 
 ```bash
 xcodegen generate --spec project.yml
-```
-
-Lệnh này tạo `TermX.xcodeproj` từ `project.yml`.
-
-## Build
-
-```bash
 xcodebuild \
   -project TermX.xcodeproj \
   -scheme TermX \
   -configuration Debug \
   -derivedDataPath .derived-data \
   build
+open .derived-data/Build/Products/Debug/TermX.app
 ```
-
-## Chạy App
-
-Mở project bằng Xcode:
-
-```bash
-open TermX.xcodeproj
-```
-
-Sau đó chọn scheme `TermX` và Run.
 
 ## Tình trạng Hiện tại
 

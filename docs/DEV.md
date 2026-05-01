@@ -6,21 +6,48 @@
 - Xcode 15+
 - XcodeGen 2.40+
 
-## Generate Project
+## Common Commands
+
+Generate Xcode project after changing `project.yml`:
 
 ```bash
-xcodegen generate --spec project.yml
+make generate
 ```
 
-## Build
+Build with Xcode incremental cache in `.derived-data`:
 
 ```bash
-xcodebuild \
-  -project TermX.xcodeproj \
-  -scheme TermX \
-  -configuration Debug \
-  -derivedDataPath .derived-data \
-  build
+make build
+```
+
+Build then open app:
+
+```bash
+make dev
+```
+
+Run the app binary directly to see stdout/stderr logs:
+
+```bash
+make run
+```
+
+Open the last built app without rebuilding:
+
+```bash
+make open
+```
+
+Restart the last built app without rebuilding:
+
+```bash
+make rerun
+```
+
+Clean local build output:
+
+```bash
+make clean
 ```
 
 ## Current Architecture
@@ -30,7 +57,7 @@ Sources/
 ├── App/        App lifecycle, windows, tabs
 ├── Core/       PTY manager, shell session, terminal buffer
 ├── Terminal/   NSTextView rendering and keyboard input mapping
-├── UI/         Scroll view wrapper
+├── UI/         AppKit wrappers and tab UI
 └── Utils/      Shared utilities
 
 libvtutil/      C bridge for forkpty and PTY resize
@@ -40,5 +67,7 @@ Resources/      Info.plist, entitlements, assets
 ## Notes
 
 - Shell sessions use `forkpty` through `libvtutil`.
-- Terminal output currently strips ANSI escape sequences before display.
-- Future ANSI work should preserve style spans and update only dirty regions.
+- Shell reads and writes must stay on separate execution paths because PTY reads block.
+- `MainTabViewController` owns terminal sessions; `TerminalTabBarView` is only presentation.
+- ANSI support is intentionally incremental: basic SGR colors first, full xterm compatibility later.
+- Keep `.derived-data/` ignored and local for Xcode build cache.
