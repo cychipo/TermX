@@ -1,167 +1,121 @@
-# FayeDark Agent Kit
+# TermX
 
-AI-powered development kit for coding agents (Claude Code, OpenCode). Specialized subagents handle planning, implementation, testing, and review.
+TermX là terminal emulator native cho macOS, viết bằng Swift và AppKit. Mục tiêu của dự án là tạo terminal nhẹ, khởi động nhanh, render mượt và hòa hợp với trải nghiệm macOS.
 
-## Quick Start
+## Mục tiêu
 
-### Install CLI from a private GitHub Release
+- Native macOS app, không phụ thuộc framework đa nền tảng.
+- Khởi động nhanh, độ trễ input thấp.
+- Hỗ trợ shell mặc định của người dùng như `zsh` hoặc `bash`.
+- Hỗ trợ PTY, ANSI escape codes, scrollback và tab workflow.
+- Tối ưu CPU, RAM và năng lượng.
 
-Requirements:
-- Node.js 18+
-- GitHub CLI authenticated with repo access: `gh auth login`
+## Tech Stack
 
-```bash
-# Download the packaged CLI from the latest private release
-gh release download --repo cychipo/fd-kit --pattern "fayedark-kit-*.tgz"
+| Thành phần | Công nghệ |
+|-----------|-----------|
+| Language | Swift 5.9+ |
+| UI | AppKit |
+| Terminal backend | `forkpty` qua C bridge |
+| Build project | XcodeGen |
+| Native C bridge | CMake / C |
+| Target | macOS 13.0+ |
 
-# Install globally from the downloaded tarball
-npm install -g ./fayedark-kit-*.tgz
-
-# Verify installation
-fdk --help
-```
-
-Alternative global install commands:
-
-```bash
-pnpm add -g ./fayedark-kit-*.tgz
-# or
-yarn global add file:./fayedark-kit-*.tgz
-# or
-bun add -g ./fayedark-kit-*.tgz
-```
-
-For project setup from the local monorepo:
-
-```bash
-cd ../my-project
-fdk init --local
-```
-
-Or point directly at a local kit directory:
-
-```bash
-fdk init --kit-path /path/to/agent-kit/claude
-```
-
-### Initialize a project
-
-```bash
-# From GitHub release (recommended for installed users)
-fdk init
-
-# From local monorepo (recommended when developing this repo)
-fdk init --local
-
-# Explicit local kit path
-fdk init --kit-path /path/to/agent-kit/claude
-```
-
-### Core commands
-
-```bash
-fdk doctor         # Health check
-fdk skills --list  # List installed skills
-fdk config show    # View configuration
-fdk update         # Update CLI, then offer to refresh project kit with fdk init
-```
-
-## Repo Layout
-
-This is a **monorepo** containing the kit and its CLI:
-
-```
-agent-kit/
-├── claude/           # Kit source (shipped as .claude/ after install)
-│   ├── agents/       # 16 specialized agents
-│   ├── skills/       # 80+ skills
-│   ├── commands/      # Slash commands
-│   ├── hooks/        # Lifecycle hooks
-│   ├── rules/        # Workflow rules
-│   ├── output-styles/
-│   ├── schemas/
-│   ├── session-state/
-│   ├── templates/
-│   ├── metadata.json
-│   └── settings.json
-├── cli/              # fayedark-agent-kit-cli (published to npm, CLI binary: `fdk`)
-├── scripts/          # Build scripts (prepare-release-assets.cjs)
-├── docs/             # Documentation
-├── tests/, evals/    # Dev-only
-└── .github/workflows/release.yml
-```
-
-## Update workflow
-
-When a new release is published:
-
-```bash
-fdk update
-```
-
-This updates the global CLI first, then hands off to `fdk init` so the `.claude/` kit inside each project can be refreshed.
-
-## Claude workflow after installation
-
-After the kit is installed, use these slash commands inside Claude Code:
-
-```
-/plan → /cook → /code-review → /ship
-```
-
-Claude orchestrates specialized subagents:
-
-| Agent | Role |
-|-------|------|
-| `planner` | Architecture breakdown, phase planning |
-| `implementer` | Code implementation per phase |
-| `tester` | Unit + integration tests, coverage |
-| `reviewer` | Code quality, spec compliance |
-| `debugger` | Root-cause investigation |
-| `researcher` | Technical research (parallel) |
-| `doc-writer` | Documentation updates |
-| `git-manager` | Git operations, commits |
-
-See `.claude/rules/primary-workflow.md` for the full protocol.
-
-## Common Claude slash commands
-
-These run inside Claude Code after `fdk init` has installed the kit:
+## Cấu trúc Dự án
 
 ```text
-/plan Build a task management app
-/brainstorm Choose stack for real-time collaboration
-/fix Authentication bug when logging in with Google
-/code-review
-/ship
+TermX/
+├── Sources/
+│   ├── App/        App lifecycle, window, tab
+│   ├── Core/       PTY, shell session, terminal buffer
+│   ├── Terminal/   Rendering, ANSI handling, input mapping
+│   ├── UI/         AppKit wrappers
+│   └── Utils/      Shared utilities
+├── Resources/      Info.plist, entitlements, assets
+├── libvtutil/      C bridge for PTY operations
+├── docs/           Developer documentation
+├── plans/          Implementation plans
+├── project.yml     XcodeGen config
+└── CMakeLists.txt  C bridge build config
 ```
 
-## Plan Format
+## Yêu cầu
 
+- macOS 13.0+
+- Xcode 15+
+- XcodeGen 2.40+
+
+Cài XcodeGen nếu chưa có:
+
+```bash
+brew install xcodegen
 ```
-plans/
-└── 260409-1226-task-management-app/
-    ├── plan.md
-    ├── phase-01-setup.md
-    ├── phase-02-database.md
-    └── phase-03-implementation.md
+
+## Generate Xcode Project
+
+```bash
+xcodegen generate --spec project.yml
 ```
 
-## Documentation
+Lệnh này tạo `TermX.xcodeproj` từ `project.yml`.
 
-- [Installation Guide](./docs/INSTALL.md)
-- [Development Guide](./docs/DEV.md)
-- [User Guide](./docs/GUIDE.md)
-- [Code Standards](./docs/code-standards.md)
-- [System Architecture](./docs/system-architecture.md)
+## Build
 
-## Contributing
+```bash
+xcodebuild \
+  -project TermX.xcodeproj \
+  -scheme TermX \
+  -configuration Debug \
+  -derivedDataPath .derived-data \
+  build
+```
 
-1. Fork and create a feature branch
-2. Follow `.claude/rules/development-rules.md`
-3. Run `fdk doctor` to verify setup
-4. Submit PR
+## Chạy App
 
-## License
+Mở project bằng Xcode:
 
-Internal use — FayeDark.
+```bash
+open TermX.xcodeproj
+```
+
+Sau đó chọn scheme `TermX` và Run.
+
+## Tình trạng Hiện tại
+
+Đã có foundation ban đầu:
+
+- XcodeGen project config.
+- AppKit app lifecycle.
+- Main window và native tab controller.
+- PTY bridge qua `forkpty`.
+- Shell session đọc/ghi dữ liệu thật.
+- NSTextView terminal view tối thiểu.
+- Keyboard mapping cơ bản cho arrow keys, Home/End, Page Up/Down, F1-F4.
+
+Giới hạn hiện tại:
+
+- ANSI escape sequences hiện được strip để hiển thị text sạch, chưa preserve màu/style.
+- Scrollback buffer hiện là implementation đơn giản, cần nâng cấp sang ring buffer đúng nghĩa.
+- Chưa có test suite tự động.
+
+## Roadmap Gần
+
+1. Implement ANSI parser giữ style spans: color, bold, underline, true color.
+2. Thay scrollback bằng circular/ring buffer O(1).
+3. Dirty-region rendering để tránh redraw toàn màn hình.
+4. Resize/reflow theo PTY size.
+5. Preferences UI cho font size, theme và shell path.
+
+## Tài liệu
+
+- [Development Guide](docs/DEV.md)
+- [User Stories](user_stories.md)
+- [Implementation Plan](plans/260501-1024-setup-termx-codebase/plan.md)
+
+## Nguyên tắc Phát triển
+
+- Ưu tiên độ đúng của terminal core.
+- Không block main thread bằng parsing hoặc I/O.
+- Hot path phải tránh O(n²) và object allocation không cần thiết.
+- Dùng `struct`/`enum` cho dữ liệu terminal khi có thể.
+- Chỉ dùng `class` khi cần identity, lifecycle hoặc AppKit subclassing.
