@@ -52,3 +52,5 @@ release-manifest.json
 # Python coverage
 .coverage
 **/.coverage
+
+plans/
