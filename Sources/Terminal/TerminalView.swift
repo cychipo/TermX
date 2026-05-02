@@ -58,7 +58,7 @@ final class TerminalView: NSTextView {
         autoresizingMask = [.width, .height]
         minSize = .zero
         maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        textContainerInset = NSSize(width: 18, height: 16)
+        textContainerInset = NSSize(width: 8, height: 6)
     }
 
     private func append(_ text: String) {

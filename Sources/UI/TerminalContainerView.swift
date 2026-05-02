@@ -1,7 +1,6 @@
 import AppKit
 
 final class TerminalContainerView: NSView {
-    private let visualEffectView = NSVisualEffectView()
     private let contentView = NSView()
     private let tabBarView = TerminalTabBarView()
     private let tabController: MainTabViewController
@@ -13,7 +12,6 @@ final class TerminalContainerView: NSView {
         tabBarView.delegate = self
         wantsLayer = true
         layer?.backgroundColor = TerminalTheme.windowBackground.cgColor
-        setupVisualEffect()
         setupContentView()
         updateTabs()
     }
@@ -22,28 +20,10 @@ final class TerminalContainerView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupVisualEffect() {
-        visualEffectView.material = .hudWindow
-        visualEffectView.blendingMode = .behindWindow
-        visualEffectView.state = .active
-        visualEffectView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(visualEffectView)
-        NSLayoutConstraint.activate([
-            visualEffectView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            visualEffectView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            visualEffectView.topAnchor.constraint(equalTo: topAnchor),
-            visualEffectView.bottomAnchor.constraint(equalTo: bottomAnchor)
-        ])
-    }
 
     private func setupContentView() {
         contentView.wantsLayer = true
-        contentView.layer?.cornerRadius = 18
-        contentView.layer?.cornerCurve = .continuous
-        contentView.layer?.borderWidth = 1
-        contentView.layer?.borderColor = TerminalTheme.border.cgColor
         contentView.layer?.backgroundColor = TerminalTheme.terminalBackground.cgColor
-        contentView.layer?.masksToBounds = true
         contentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(contentView)
 
@@ -53,10 +33,10 @@ final class TerminalContainerView: NSView {
         contentView.addSubview(tabView)
 
         NSLayoutConstraint.activate([
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 14),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -14),
+            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
             tabBarView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             tabBarView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             tabBarView.topAnchor.constraint(equalTo: contentView.topAnchor),

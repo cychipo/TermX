@@ -35,28 +35,26 @@ final class TerminalTabBarView: NSView {
 
     private func setupView() {
         wantsLayer = true
-        layer?.backgroundColor = NSColor.clear.cgColor
+        layer?.backgroundColor = TerminalTheme.tabBarBackground.cgColor
         translatesAutoresizingMaskIntoConstraints = false
 
         stackView.orientation = .horizontal
         stackView.alignment = .centerY
-        stackView.spacing = 8
-        stackView.edgeInsets = NSEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+        stackView.spacing = 1
+        stackView.edgeInsets = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
 
         addButton.target = self
         addButton.action = #selector(addTab)
         addButton.isBordered = false
-        addButton.font = NSFont.systemFont(ofSize: 17, weight: .medium)
+        addButton.font = NSFont.systemFont(ofSize: 16, weight: .regular)
         addButton.contentTintColor = TerminalTheme.mutedForeground
         addButton.wantsLayer = true
-        addButton.layer?.cornerRadius = 9
-        addButton.layer?.cornerCurve = .continuous
-        addButton.layer?.backgroundColor = NSColor(calibratedWhite: 1, alpha: 0.06).cgColor
+        addButton.layer?.backgroundColor = NSColor.clear.cgColor
         addButton.translatesAutoresizingMaskIntoConstraints = false
-        addButton.widthAnchor.constraint(equalToConstant: 34).isActive = true
-        addButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        addButton.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        addButton.heightAnchor.constraint(equalToConstant: 28).isActive = true
         stackView.addArrangedSubview(addButton)
 
         NSLayoutConstraint.activate([
@@ -64,44 +62,43 @@ final class TerminalTabBarView: NSView {
             stackView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            heightAnchor.constraint(equalToConstant: 46)
+            heightAnchor.constraint(equalToConstant: 32)
         ])
     }
 
     private func makeTabView(title: String, index: Int, selected: Bool) -> NSView {
         let container = NSView()
         container.wantsLayer = true
-        container.layer?.cornerRadius = 9
-        container.layer?.cornerCurve = .continuous
-        container.layer?.backgroundColor = selected ? NSColor(calibratedWhite: 1, alpha: 0.10).cgColor : NSColor.clear.cgColor
+        container.layer?.backgroundColor = selected ? TerminalTheme.selectedTabBackground.cgColor : TerminalTheme.tabBarBackground.cgColor
         container.translatesAutoresizingMaskIntoConstraints = false
 
         let selectButton = NSButton(title: title, target: self, action: #selector(selectTab(_:)))
         selectButton.tag = index
         selectButton.isBordered = false
-        selectButton.font = NSFont.systemFont(ofSize: 13, weight: selected ? .semibold : .medium)
+        selectButton.font = NSFont.systemFont(ofSize: 12, weight: selected ? .medium : .regular)
         selectButton.contentTintColor = selected ? TerminalTheme.foreground : TerminalTheme.mutedForeground
+        selectButton.alignment = .left
         selectButton.translatesAutoresizingMaskIntoConstraints = false
 
         let closeButton = NSButton(title: "×", target: self, action: #selector(closeTab(_:)))
         closeButton.tag = index
         closeButton.isBordered = false
-        closeButton.font = NSFont.systemFont(ofSize: 14, weight: .medium)
-        closeButton.contentTintColor = selected ? TerminalTheme.mutedForeground : NSColor(calibratedWhite: 1, alpha: 0.35)
+        closeButton.font = NSFont.systemFont(ofSize: 13, weight: .regular)
+        closeButton.contentTintColor = selected ? TerminalTheme.mutedForeground : NSColor(calibratedWhite: 1, alpha: 0.36)
         closeButton.translatesAutoresizingMaskIntoConstraints = false
 
         container.addSubview(selectButton)
         container.addSubview(closeButton)
 
         NSLayoutConstraint.activate([
-            container.heightAnchor.constraint(equalToConstant: 30),
-            container.widthAnchor.constraint(greaterThanOrEqualToConstant: 116),
-            selectButton.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
+            container.heightAnchor.constraint(equalToConstant: 32),
+            container.widthAnchor.constraint(greaterThanOrEqualToConstant: 132),
+            selectButton.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 10),
             selectButton.centerYAnchor.constraint(equalTo: container.centerYAnchor),
             closeButton.leadingAnchor.constraint(equalTo: selectButton.trailingAnchor, constant: 6),
-            closeButton.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -8),
+            closeButton.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -6),
             closeButton.centerYAnchor.constraint(equalTo: container.centerYAnchor),
-            closeButton.widthAnchor.constraint(equalToConstant: 20),
+            closeButton.widthAnchor.constraint(equalToConstant: 18),
             closeButton.heightAnchor.constraint(equalToConstant: 24)
         ])
 

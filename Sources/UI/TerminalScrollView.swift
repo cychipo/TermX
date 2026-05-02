@@ -13,7 +13,7 @@ final class TerminalScrollView: NSScrollView {
         hasHorizontalScroller = false
         autohidesScrollers = true
         scrollerStyle = .overlay
-        contentInsets = NSEdgeInsets(top: 4, left: 0, bottom: 6, right: 0)
+        contentInsets = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         documentView = terminalView
         terminalView.frame = bounds
         addSubview(inputView)
