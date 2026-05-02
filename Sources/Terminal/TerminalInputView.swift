@@ -26,6 +26,10 @@ final class TerminalInputView: NSView, NSTextInputClient {
         }
     }
 
+    override func scrollWheel(with event: NSEvent) {
+        superview?.scrollWheel(with: event)
+    }
+
     override func doCommand(by selector: Selector) {
         guard let sequence = InputHandler.sequence(for: selector) else { return }
         session.send(sequence)

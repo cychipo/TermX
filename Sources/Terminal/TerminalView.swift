@@ -55,9 +55,11 @@ final class TerminalView: NSTextView {
         textColor = ANSIStyleMapper.foregroundColor
         allowsUndo = false
         usesFindBar = true
-        autoresizingMask = [.width, .height]
+        autoresizingMask = [.width]
         minSize = .zero
         maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        isVerticallyResizable = true
+        isHorizontallyResizable = false
         textContainerInset = NSSize(width: 8, height: 6)
     }
 
@@ -105,7 +107,28 @@ final class TerminalView: NSTextView {
             index += 1
         }
         flushChunk()
-        scrollToEndOfDocument(nil)
+        scrollToBottom()
+    }
+
+    private func scrollToBottom() {
+        resizeDocumentToFitContent()
+        guard let clipView = enclosingScrollView?.contentView else {
+            scrollToEndOfDocument(nil)
+            return
+        }
+        let maxY = max(frame.height - clipView.bounds.height, 0)
+        clipView.scroll(to: NSPoint(x: 0, y: maxY))
+        enclosingScrollView?.reflectScrolledClipView(clipView)
+    }
+
+    private func resizeDocumentToFitContent() {
+        guard let layoutManager, let textContainer else { return }
+        layoutManager.ensureLayout(for: textContainer)
+        let usedHeight = layoutManager.usedRect(for: textContainer).height + textContainerInset.height * 2
+        let targetHeight = max(enclosingScrollView?.contentView.bounds.height ?? 0, ceil(usedHeight))
+        if abs(frame.height - targetHeight) > 0.5 {
+            setFrameSize(NSSize(width: frame.width, height: targetHeight))
+        }
     }
 
     private func appendRenderable(_ text: String) {
