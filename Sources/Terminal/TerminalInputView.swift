@@ -21,7 +21,7 @@ final class TerminalInputView: NSView, NSTextInputClient {
     }
 
     override func keyDown(with event: NSEvent) {
-        if handleOptionKey(event) {
+        if handleControlKey(event) || handleOptionKey(event) {
             return
         }
         if inputContext?.handleEvent(event) != true {
@@ -44,6 +44,19 @@ final class TerminalInputView: NSView, NSTextInputClient {
 
     func insertText(_ string: Any, replacementRange: NSRange) {
         sendCommittedText(string)
+    }
+
+    private func handleControlKey(_ event: NSEvent) -> Bool {
+        guard event.modifierFlags.contains(.control), let text = event.charactersIgnoringModifiers?.lowercased(), text.count == 1 else {
+            return false
+        }
+        guard let scalar = text.unicodeScalars.first, scalar.value >= 64, scalar.value <= 95 || scalar.value >= 97, scalar.value <= 122 else {
+            return false
+        }
+        let value = scalar.value >= 97 ? scalar.value - 96 : scalar.value - 64
+        guard let control = UnicodeScalar(value) else { return false }
+        session.send(String(control))
+        return true
     }
 
     private func handleOptionKey(_ event: NSEvent) -> Bool {

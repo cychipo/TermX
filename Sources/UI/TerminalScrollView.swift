@@ -19,10 +19,15 @@ final class TerminalScrollView: NSScrollView {
         addSubview(inputView)
         inputView.frame = bounds
         inputView.autoresizingMask = [.width, .height]
+        NotificationCenter.default.addObserver(self, selector: #selector(settingsDidChange), name: .termXSettingsDidChange, object: nil)
     }
 
     override func mouseDown(with event: NSEvent) {
         window?.makeFirstResponder(inputView)
+    }
+
+    @objc private func settingsDidChange() {
+        backgroundColor = ANSIStyleMapper.backgroundColor
     }
 
     required init?(coder: NSCoder) {
