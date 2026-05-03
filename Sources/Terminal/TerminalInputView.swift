@@ -21,6 +21,9 @@ final class TerminalInputView: NSView, NSTextInputClient {
     }
 
     override func keyDown(with event: NSEvent) {
+        if handleOptionKey(event) {
+            return
+        }
         if inputContext?.handleEvent(event) != true {
             interpretKeyEvents([event])
         }
@@ -41,6 +44,22 @@ final class TerminalInputView: NSView, NSTextInputClient {
 
     func insertText(_ string: Any, replacementRange: NSRange) {
         sendCommittedText(string)
+    }
+
+    private func handleOptionKey(_ event: NSEvent) -> Bool {
+        guard event.modifierFlags.contains(.option), let text = event.charactersIgnoringModifiers, !text.isEmpty else {
+            return false
+        }
+        switch SettingsStore.shared.optionKeyBehavior {
+        case .escape:
+            session.send("\u{1B}\(text)")
+            return true
+        case .meta:
+            session.send("\u{1B}\(text)")
+            return true
+        case .normal:
+            return false
+        }
     }
 
     private func sendCommittedText(_ value: Any) {

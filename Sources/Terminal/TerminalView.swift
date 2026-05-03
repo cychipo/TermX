@@ -2,13 +2,14 @@ import AppKit
 
 final class TerminalView: NSTextView {
     private let session: ShellSession
-    private var buffer = TerminalBuffer()
+    private var buffer: TerminalBuffer
     private var lastSize = (columns: 0, rows: 0)
     private var pendingOutput = ""
     private var cursorLocation = 0
 
-    init(session: ShellSession) {
+    init(session: ShellSession, scrollbackLines: Int = SettingsStore.shared.scrollbackLines) {
         self.session = session
+        self.buffer = TerminalBuffer(maxLineCount: scrollbackLines)
         let storage = NSTextStorage()
         let layoutManager = NSLayoutManager()
         let container = NSTextContainer(containerSize: NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -18,6 +19,7 @@ final class TerminalView: NSTextView {
         storage.addLayoutManager(layoutManager)
         super.init(frame: .zero, textContainer: container)
         configure()
+        NotificationCenter.default.addObserver(self, selector: #selector(settingsDidChange), name: .termXSettingsDidChange, object: nil)
         session.delegate = self
     }
 
@@ -63,6 +65,20 @@ final class TerminalView: NSTextView {
         textContainerInset = NSSize(width: 8, height: 6)
     }
 
+    @objc private func settingsDidChange() {
+        applyTheme()
+        updateTerminalSizeIfNeeded()
+    }
+
+    private func applyTheme() {
+        backgroundColor = ANSIStyleMapper.backgroundColor
+        insertionPointColor = TerminalTheme.accent
+        font = ANSIStyleMapper.baseFont
+        textColor = ANSIStyleMapper.foregroundColor
+        guard let textStorage else { return }
+        textStorage.addAttributes(ANSIStyleMapper.defaultAttributes, range: NSRange(location: 0, length: textStorage.length))
+    }
+
     private func append(_ text: String) {
         var chunk = String.UnicodeScalarView()
         chunk.reserveCapacity(text.unicodeScalars.count)
@@ -100,7 +116,7 @@ final class TerminalView: NSTextView {
                 index = handleEscapeSequence(in: scalars, from: index + 1)
                 continue
             case 0x07:
-                break
+                handleBell()
             default:
                 chunk.append(scalar)
             }
@@ -108,6 +124,19 @@ final class TerminalView: NSTextView {
         }
         flushChunk()
         scrollToBottom()
+    }
+
+    private func handleBell() {
+        let store = SettingsStore.shared
+        if store.bellSound {
+            NSSound.beep()
+        }
+        if store.visualBell {
+            window?.backgroundColor = TerminalTheme.accent.withAlphaComponent(0.18)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
+                self?.window?.backgroundColor = TerminalTheme.windowBackground
+            }
+        }
     }
 
     private func scrollToBottom() {

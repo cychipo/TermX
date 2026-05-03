@@ -2,7 +2,7 @@ import AppKit
 
 final class TerminalTab: NSViewController {
     private let session = ShellSession()
-    private lazy var terminalView = TerminalView(session: session)
+    private lazy var terminalView = TerminalView(session: session, scrollbackLines: SettingsStore.shared.scrollbackLines)
     private lazy var inputView = TerminalInputView(session: session)
     private var didStartSession = false
 

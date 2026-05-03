@@ -64,6 +64,14 @@ libvtutil/      C bridge for forkpty and PTY resize
 Resources/      Info.plist, entitlements, assets
 ```
 
+## Preferences
+
+Open Preferences with `Cmd+,` to configure appearance and terminal behavior.
+
+- Appearance: font family, font size, and System/Light/Dark theme.
+- Terminal: scrollback line count for new terminal buffers and audio/visual bell.
+- Keyboard: option-key behavior and shortcut reference.
+
 ## Notes
 
 - Shell sessions use `forkpty` through `libvtutil`.

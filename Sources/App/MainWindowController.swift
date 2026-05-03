@@ -45,6 +45,11 @@ final class MainWindowController: NSWindowController {
         window.backgroundColor = TerminalTheme.windowBackground
         window.isMovableByWindowBackground = false
         window.contentView = TerminalContainerView(tabController: tabController)
+        NotificationCenter.default.addObserver(self, selector: #selector(settingsDidChange), name: .termXSettingsDidChange, object: nil)
         tabController.openNewTab()
+    }
+
+    @objc private func settingsDidChange() {
+        window?.backgroundColor = TerminalTheme.windowBackground
     }
 }

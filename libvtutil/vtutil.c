@@ -31,6 +31,10 @@ int termx_open_pty(int *master_fd, pid_t *child_pid, const char *shell_path, con
         setenv("LANG", "en_US.UTF-8", 1);
         setenv("LC_CTYPE", "UTF-8", 1);
         unsetenv("LC_ALL");
+        const char *home = getenv("HOME");
+        if (home != NULL && home[0] != '\0') {
+            chdir(home);
+        }
         execl(shell_path, shell_path, "-l", NULL);
         _exit(127);
     }

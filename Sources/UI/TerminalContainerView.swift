@@ -11,7 +11,8 @@ final class TerminalContainerView: NSView {
         tabController.tabDelegate = self
         tabBarView.delegate = self
         wantsLayer = true
-        layer?.backgroundColor = TerminalTheme.windowBackground.cgColor
+        applyTheme()
+        NotificationCenter.default.addObserver(self, selector: #selector(settingsDidChange), name: .termXSettingsDidChange, object: nil)
         setupContentView()
         updateTabs()
     }
@@ -49,6 +50,15 @@ final class TerminalContainerView: NSView {
 
     private func updateTabs() {
         tabBarView.update(titles: tabController.currentTabTitles(), selectedIndex: tabController.selectedTabViewItemIndex)
+    }
+
+    private func applyTheme() {
+        layer?.backgroundColor = TerminalTheme.windowBackground.cgColor
+        contentView.layer?.backgroundColor = TerminalTheme.terminalBackground.cgColor
+    }
+
+    @objc private func settingsDidChange() {
+        applyTheme()
     }
 }
 

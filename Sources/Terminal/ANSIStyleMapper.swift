@@ -1,9 +1,9 @@
 import AppKit
 
 struct ANSIStyleMapper {
-    static let baseFont = TerminalTheme.font
-    static let backgroundColor = TerminalTheme.terminalBackground
-    static let foregroundColor = TerminalTheme.foreground
+    static var baseFont: NSFont { TerminalTheme.font }
+    static var backgroundColor: NSColor { TerminalTheme.terminalBackground }
+    static var foregroundColor: NSColor { TerminalTheme.foreground }
 
     static var defaultAttributes: [NSAttributedString.Key: Any] {
         attributes(foregroundColor: foregroundColor, isBold: false)

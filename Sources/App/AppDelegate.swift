@@ -2,8 +2,10 @@ import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var windows: [MainWindowController] = []
+    private var settingsWindowController: SettingsWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        SettingsStore.registerDefaults()
         setupMainMenu()
         openNewWindow(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -33,6 +35,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         controller.closeCurrentTab()
     }
 
+    @objc func openPreferences(_ sender: Any?) {
+        if settingsWindowController == nil {
+            settingsWindowController = SettingsWindowController()
+        }
+        settingsWindowController?.showWindow(sender)
+    }
+
     private func setupMainMenu() {
         let mainMenu = NSMenu()
         mainMenu.addItem(appMenuItem())
@@ -47,6 +56,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let item = NSMenuItem()
         let menu = NSMenu(title: "TermX")
         menu.addItem(withTitle: "About TermX", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        menu.addItem(.separator())
+        menu.addItem(withTitle: "Preferences...", action: #selector(openPreferences(_:)), keyEquivalent: ",")
         menu.addItem(.separator())
         menu.addItem(withTitle: "Quit TermX", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         item.submenu = menu
