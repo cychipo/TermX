@@ -43,6 +43,14 @@ final class TerminalView: NSTextView {
         updateTerminalSizeIfNeeded()
     }
 
+    override func scrollWheel(with event: NSEvent) {
+        let sequence = event.scrollingDeltaY > 0 ? "\u{1B}[A" : "\u{1B}[B"
+        let count = max(1, min(Int(abs(event.scrollingDeltaY) / 8), 6))
+        for _ in 0..<count {
+            session.send(sequence)
+        }
+    }
+
     @objc func clear(_ sender: Any?) {
         buffer.clear()
         pendingOutput.removeAll(keepingCapacity: true)
@@ -110,7 +118,10 @@ final class TerminalView: NSTextView {
             case 0x07:
                 handleBell()
             default:
-                write(Character(scalar))
+                let character = Character(scalar)
+                if shouldRender(character) {
+                    write(character)
+                }
             }
             index += 1
         }
@@ -129,6 +140,10 @@ final class TerminalView: NSTextView {
                 self?.window?.backgroundColor = TerminalTheme.windowBackground
             }
         }
+    }
+
+    private func shouldRender(_ character: Character) -> Bool {
+        character != "%"
     }
 
     private func write(_ character: Character) {
@@ -395,7 +410,7 @@ final class TerminalView: NSTextView {
             }
         }
         textStorage?.setAttributedString(output)
-        resizeDocumentToFitContent()
+        resizeDocumentToGrid()
     }
 
     private func appendAttributedRow(_ row: [TerminalCell], to output: NSMutableAttributedString) {
@@ -432,13 +447,16 @@ final class TerminalView: NSTextView {
         enclosingScrollView?.reflectScrolledClipView(clipView)
     }
 
-    private func resizeDocumentToFitContent() {
-        guard let layoutManager, let textContainer else { return }
-        layoutManager.ensureLayout(for: textContainer)
-        let usedHeight = layoutManager.usedRect(for: textContainer).height + textContainerInset.height * 2
-        let targetHeight = max(enclosingScrollView?.contentView.bounds.height ?? 0, ceil(usedHeight))
-        if abs(frame.height - targetHeight) > 0.5 {
-            setFrameSize(NSSize(width: frame.width, height: targetHeight))
+    private func resizeDocumentToGrid() {
+        let font = ANSIStyleMapper.baseFont
+        let cellWidth = max(font.maximumAdvancement.width, 1)
+        let cellHeight = max(font.boundingRectForFont.height + 2, 1)
+        let targetSize = NSSize(
+            width: CGFloat(lastSize.columns) * cellWidth + textContainerInset.width * 2,
+            height: CGFloat(lastSize.rows) * cellHeight + textContainerInset.height * 2
+        )
+        if abs(frame.width - targetSize.width) > 0.5 || abs(frame.height - targetSize.height) > 0.5 {
+            setFrameSize(targetSize)
         }
     }
 
